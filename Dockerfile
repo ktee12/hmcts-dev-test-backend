@@ -7,7 +7,8 @@ COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle* ./
 
-RUN chmod +x gradlew
+RUN sed -i 's/\r$//' gradlew \
+    && chmod +x gradlew
 
 COPY src src
 
