@@ -56,7 +56,7 @@ Update the database password if required.
 Start the application:
 
 ```bash
-docker compose up --build
+docker-compose up --build
 ```
 
 The application will be available at:
@@ -77,7 +77,7 @@ GET /health/readiness
 Stop the stack:
 
 ```bash
-docker compose down
+docker-compose down
 ```
 
 ---
@@ -303,7 +303,7 @@ With additional time I would:
 Application
 
 ```bash
-docker compose up --build
+docker-compose up --build
 ```
 
 Health
