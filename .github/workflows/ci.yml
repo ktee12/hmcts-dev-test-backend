@@ -6,17 +6,32 @@ on:
       - master
   push:
     branches:
-      - master
+      - "**" #master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
+    name: Build, test and static analysis
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        name: Check out repository
+
       - uses: actions/setup-java@v5
+        name: Set up Java 21
         with:
           distribution: 'temurin' # See 'Supported distributions' for available options
-          java-version: '17'
+          java-version: '21'
           cache: 'gradle'
-      - name: Build
-        run: ./gradlew check
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+
+      - name: Build, test and run static analysis
+        run: ./gradlew clean check --no-daemon
