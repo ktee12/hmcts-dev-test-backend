@@ -35,3 +35,47 @@ jobs:
 
       - name: Build, test and run static analysis
         run: ./gradlew clean check --no-daemon
+
+  container:
+    name: Build and scan container image
+    runs-on: ubuntu-latest
+    needs: build
+
+    env:
+      IMAGE_NAME: hmcts-dev-test-backend
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Generate image tag
+        id: image
+        shell: bash
+        run: |
+          SHORT_SHA="${GITHUB_SHA::12}"
+          SAFE_BRANCH="$(echo "${GITHUB_REF_NAME}" | tr '/_' '--')"
+          echo "tag=${SAFE_BRANCH}-${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --tag "${IMAGE_NAME}:${{ steps.image.outputs.tag }}" \
+            .
+
+      - name: Scan HIGH vulnerabilities
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ steps.image.outputs.tag }}
+          severity: HIGH
+          ignore-unfixed: true
+          exit-code: "0"
+          format: table
+
+      - name: Block CRITICAL vulnerabilities
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ steps.image.outputs.tag }}
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+          format: table
