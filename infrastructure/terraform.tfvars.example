@@ -1,0 +1,15 @@
+service_name = "hmcts-dev-test"
+environment  = "prod"
+location     = "uksouth"
+
+container_image = "ghcr.io/your-github-username/hmcts-dev-test-backend:replace-with-git-sha"
+
+database_name           = "devtest"
+database_admin_username = "devtestadmin"
+
+tags = {
+  managed-by  = "terraform"
+  service     = "hmcts-dev-test"
+  environment = "prod"
+  owner       = "dts"
+}
