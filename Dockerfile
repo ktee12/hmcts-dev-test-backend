@@ -14,7 +14,7 @@ COPY src src
 
 RUN ./gradlew clean bootJar --no-daemon
 
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jre-resolute
 
 RUN addgroup --system appgroup \
     && adduser --system --ingroup appgroup appuser
